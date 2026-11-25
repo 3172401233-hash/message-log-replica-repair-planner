@@ -1,0 +1,42 @@
+{
+  "simulated": true,
+  "scenario": "tail-conflict",
+  "topic": "orders",
+  "partition": 0,
+  "committedWatermark": 100,
+  "leaderHistory": [
+    { "epoch": 1, "leader": "r1", "startOffset": 0 }
+  ],
+  "replicas": {
+    "r1": {
+      "logEndOffset": 180,
+      "earliestOffset": 0,
+      "leaderEpoch": 1,
+      "epochCheckpoint": [
+        { "epoch": 1, "startOffset": 0 }
+      ],
+      "segments": [
+        { "baseOffset": 0, "endOffsetExclusive": 100, "checksum": "sha256:seg-0-main" },
+        { "baseOffset": 100, "endOffsetExclusive": 150, "checksum": "sha256:seg-100-main" },
+        { "baseOffset": 150, "endOffsetExclusive": 180, "checksum": "sha256:seg-150-main" }
+      ]
+    },
+    "r2": {
+      "logEndOffset": 170,
+      "earliestOffset": 0,
+      "leaderEpoch": 1,
+      "epochCheckpoint": [
+        { "epoch": 1, "startOffset": 0 }
+      ],
+      "segments": [
+        { "baseOffset": 0, "endOffsetExclusive": 100, "checksum": "sha256:seg-0-main" },
+        { "baseOffset": 100, "endOffsetExclusive": 150, "checksum": "sha256:seg-100-fork" },
+        { "baseOffset": 150, "endOffsetExclusive": 170, "checksum": "sha256:seg-150-fork" }
+      ]
+    }
+  },
+  "events": [
+    { "sequence": 1, "at": "2026-11-25T09:00:00Z", "type": "leader_elected", "epoch": 1, "leader": "r1" },
+    { "sequence": 2, "at": "2026-11-25T09:04:00Z", "type": "checksum_mismatch_detected", "replica": "r2", "detail": "simulated divergent tail at segment base offset 100" }
+  ]
+}

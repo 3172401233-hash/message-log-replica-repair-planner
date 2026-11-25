@@ -1,0 +1,52 @@
+{
+  "simulated": true,
+  "scenario": "epoch-rollback",
+  "topic": "inventory",
+  "partition": 7,
+  "committedWatermark": 110,
+  "leaderHistory": [
+    { "epoch": 1, "leader": "r2", "startOffset": 0 },
+    { "epoch": 2, "leader": "r1", "startOffset": 90 },
+    { "epoch": 3, "leader": "r2", "startOffset": 120 }
+  ],
+  "replicas": {
+    "r1": {
+      "logEndOffset": 160,
+      "earliestOffset": 0,
+      "leaderEpoch": 2,
+      "epochCheckpoint": [
+        { "epoch": 1, "startOffset": 0 },
+        { "epoch": 2, "startOffset": 90 }
+      ],
+      "segments": [
+        { "baseOffset": 0, "endOffsetExclusive": 90, "checksum": "sha256:p7-seg-0" },
+        { "baseOffset": 90, "endOffsetExclusive": 120, "checksum": "sha256:p7-seg-90" },
+        { "baseOffset": 120, "endOffsetExclusive": 160, "checksum": "sha256:p7-seg-120-old-epoch" }
+      ]
+    },
+    "r2": {
+      "logEndOffset": 170,
+      "earliestOffset": 0,
+      "leaderEpoch": 3,
+      "epochCheckpoint": [
+        { "epoch": 1, "startOffset": 0 },
+        { "epoch": 2, "startOffset": 90 },
+        { "epoch": 3, "startOffset": 120 }
+      ],
+      "segments": [
+        { "baseOffset": 0, "endOffsetExclusive": 90, "checksum": "sha256:p7-seg-0" },
+        { "baseOffset": 90, "endOffsetExclusive": 120, "checksum": "sha256:p7-seg-90" },
+        { "baseOffset": 120, "endOffsetExclusive": 170, "checksum": "sha256:p7-seg-120-new-epoch" }
+      ]
+    }
+  },
+  "events": [
+    { "sequence": 1, "at": "2026-11-25T11:00:00Z", "type": "leader_elected", "epoch": 1, "leader": "r2" },
+    { "sequence": 2, "at": "2026-11-25T11:05:00Z", "type": "broker_failure", "replica": "r2" },
+    { "sequence": 3, "at": "2026-11-25T11:06:00Z", "type": "leader_elected", "epoch": 2, "leader": "r1" },
+    { "sequence": 4, "at": "2026-11-25T11:20:00Z", "type": "broker_failure", "replica": "r1" },
+    { "sequence": 5, "at": "2026-11-25T11:21:00Z", "type": "leader_elected", "epoch": 3, "leader": "r2" },
+    { "sequence": 6, "at": "2026-11-25T11:40:00Z", "type": "broker_recovery", "replica": "r1" },
+    { "sequence": 7, "at": "2026-11-25T11:41:00Z", "type": "leader_claim", "epoch": 2, "leader": "r1", "detail": "simulated delayed rollback claim from old epoch" }
+  ]
+}

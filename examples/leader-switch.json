@@ -1,0 +1,61 @@
+{
+  "simulated": true,
+  "scenario": "leader-switch",
+  "topic": "payments",
+  "partition": 3,
+  "committedWatermark": 110,
+  "leaderHistory": [
+    { "epoch": 1, "leader": "r1", "startOffset": 0 },
+    { "epoch": 2, "leader": "r2", "startOffset": 120 }
+  ],
+  "replicas": {
+    "r1": {
+      "logEndOffset": 150,
+      "earliestOffset": 0,
+      "leaderEpoch": 1,
+      "epochCheckpoint": [
+        { "epoch": 1, "startOffset": 0 }
+      ],
+      "segments": [
+        { "baseOffset": 0, "endOffsetExclusive": 60, "checksum": "sha256:p3-seg-0" },
+        { "baseOffset": 60, "endOffsetExclusive": 120, "checksum": "sha256:p3-seg-60" },
+        { "baseOffset": 120, "endOffsetExclusive": 150, "checksum": "sha256:p3-seg-120-zombie" }
+      ]
+    },
+    "r2": {
+      "logEndOffset": 160,
+      "earliestOffset": 0,
+      "leaderEpoch": 2,
+      "epochCheckpoint": [
+        { "epoch": 1, "startOffset": 0 },
+        { "epoch": 2, "startOffset": 120 }
+      ],
+      "segments": [
+        { "baseOffset": 0, "endOffsetExclusive": 60, "checksum": "sha256:p3-seg-0" },
+        { "baseOffset": 60, "endOffsetExclusive": 120, "checksum": "sha256:p3-seg-60" },
+        { "baseOffset": 120, "endOffsetExclusive": 160, "checksum": "sha256:p3-seg-120-epoch2" }
+      ]
+    },
+    "r3": {
+      "logEndOffset": 140,
+      "earliestOffset": 0,
+      "leaderEpoch": 2,
+      "epochCheckpoint": [
+        { "epoch": 1, "startOffset": 0 },
+        { "epoch": 2, "startOffset": 120 }
+      ],
+      "segments": [
+        { "baseOffset": 0, "endOffsetExclusive": 60, "checksum": "sha256:p3-seg-0" },
+        { "baseOffset": 60, "endOffsetExclusive": 120, "checksum": "sha256:p3-seg-60" },
+        { "baseOffset": 120, "endOffsetExclusive": 140 }
+      ]
+    }
+  },
+  "events": [
+    { "sequence": 1, "at": "2026-11-25T10:00:00Z", "type": "leader_elected", "epoch": 1, "leader": "r1" },
+    { "sequence": 2, "at": "2026-11-25T10:11:00Z", "type": "broker_failure", "replica": "r1" },
+    { "sequence": 3, "at": "2026-11-25T10:12:00Z", "type": "leader_elected", "epoch": 2, "leader": "r2" },
+    { "sequence": 4, "at": "2026-11-25T10:30:00Z", "type": "broker_recovery", "replica": "r1" },
+    { "sequence": 5, "at": "2026-11-25T10:31:00Z", "type": "leader_claim", "epoch": 1, "leader": "r1", "detail": "simulated stale zombie claim after r1 rejoined" }
+  ]
+}
